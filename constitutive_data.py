@@ -80,13 +80,10 @@ def sample_tree_with_corrections(dim=3, growthSwitch=0, positivitySwitch=0):
     stress_correction_FequalI = stress_correction(sympy_expression_w_invariants, F)
     potential_correction_expression =  - potential_correction
 
-    # F = sympy.symbols("F") 
     final_expression = simplified_sympy_expression  + potential_correction_expression.evalf(4) + stress_correction_FequalI.evalf(4)
 
     condition_count,  growthSwitch, positivitySwitch = perform_checks(sympy_expression, growthSwitch, positivitySwitch)
-    # print(condition_count)
     if condition_count == 11:
-        # print(stress_correction(final_expression, F))
         return final_expression, growthSwitch, positivitySwitch
     else:
         return sample_tree_with_corrections(dim, growthSwitch, positivitySwitch)
@@ -120,7 +117,6 @@ def _sample_combination():
         return tree.Tree('exp', children)
     if r == 2:
         children = [_sample_binary()]
-        # return tree.Tree('log', children)
         rlog =  tree.Tree('log', children)
         return tree.Tree('*',[tree.Tree('-1'), rlog])
 
@@ -151,7 +147,6 @@ def _sample_unary():
         return tree.Tree('exp', children)
     if r == 1:
         children = [_sample_literal_invariant_combo()]
-        # return tree.Tree('log', children)
         rlog =  tree.Tree('log', children)
         return tree.Tree('*',[tree.Tree('-1'), rlog])
 
@@ -168,7 +163,6 @@ def _sample_invariants():
     if r == 0:
         s = 'I1'
     elif r == 1:
-        # s = 'I2'
         children = [tree.Tree('I2'), tree.Tree('1.5')]
         return tree.Tree('pow', children)
     elif r == 2:
@@ -180,7 +174,6 @@ def _sample_literal_invariant_combo():
     if r == 0:
         s = 'I1'
     if r == 1:
-        # s = 'I2'
         children = [tree.Tree('I2'), tree.Tree('1.5')]
         return tree.Tree('pow', children)
     elif r == 2:
