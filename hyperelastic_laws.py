@@ -1,23 +1,6 @@
 """
-Implements the expressions dataset of Kusner et al. (2017).
+Follows the implementation of Kusner et al. (2017).
 """
-
-# Copyright (C) 2020
-# Benjamin Paaßen
-# The University of Sydney
-
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import random
 import numpy as np
@@ -68,17 +51,14 @@ def differentiate_scalar_with_matrix(model, F):
     for ii in range(3):
         for jj in range(3):
             P[ii,jj] = sympy.diff(model,F[ii,jj])
-    # P_matrix = sympy.Matrix(P)
     return P
  
 def sample_tree():
     r = random.randrange(2)
-    combination0 = _sample_combination(flag='vol')
     combination1 = _sample_combination(flag='vol')
     combination2 = _sample_combination(flag='iso')
     combination3 = _sample_combination(flag='iso')
     psi_vol = combination1
-    # psi_vol = tree.Tree('+', [combination0, combination1])
     psi_iso = tree.Tree('+', [combination2, combination3])
     expr = tree.Tree('+', [psi_vol, psi_iso])
     return expr.to_list_format()
@@ -111,9 +91,7 @@ def _sample_binary(flag=None):
     children = [left, right]
     if r == 1:
         return tree.Tree('+', children)
-    # if r == 2:
-    #     return tree.Tree('-', children)
-    if r == 2:
+    if r == 1:
         return tree.Tree('*', children)
     if r == 3:
         return tree.Tree('/', children)
@@ -123,8 +101,6 @@ def _sample_unary(flag=None):
     if r ==0:
         return _sample_literal(flag=flag)
     children = [_sample_literal(flag=flag)]
-    # if r == 1:
-    #     return tree.Tree('exp', children)
     if r == 1:
         return tree.Tree('log', children)
 
@@ -208,51 +184,4 @@ def objective_function(nodes, adj):
     y = 0.5*(I1 - 3) + 1.5*(J - 1)**2
     # compute predicted values
     y_pred = evaluate(nodes, adj, I1, I2, J)
-    # return log(1 + MSE) as suggested by Kusner et al. (2017)
     return np.log(1. + np.mean((y - y_pred) ** 2))
-
-# def evaluate(nodes, adj, I1, I2, J, i = 0):
-#     """ Evaluates the given expression for the given x values.
-
-#     Parameters
-#     ----------
-#     nodes: list
-#         The node list of the input expression tree.
-#     adj: list
-#         The adjacency list of the input expression tree.
-#     x: array_like
-#         A single x value or an array of x values.
-
-#     Returns
-#     -------
-#     val: array_like
-#         The evaluation of the input expression for the given
-#         input with the same size as the input.
-#     """
-#     # evaluate children first
-#     children = []
-#     for j in adj[i]:
-#         children.append(evaluate(nodes, adj, I1, I2, J, j))
-#     # then evaluate the current node
-#     if nodes[i] == '+':
-#         return children[0] + children[1]
-#     if nodes[i] == '-':
-#         return children[0] - children[1]
-#     elif nodes[i] == '*':
-#         return children[0] * children[1]
-#     elif nodes[i] == '/':
-#         return children[0] / children[1]
-#     elif nodes[i] == '**':
-#         return np.power(children[0],children[1])
-#     elif nodes[i] == 'exp':
-#         return np.exp(children[0])
-#     elif nodes[i] == 'log':
-#         return np.log(children[0])
-#     elif nodes[i] == 'I1-3':
-#         return I1 - 3*np.ones_like(I1)
-#     elif nodes[i] == 'I2-3':
-#         return I2 - 3*np.ones_like(I2)
-#     elif nodes[i] == 'J-1':
-#         return J  - np.ones_like(J)
-#     else:
-#         return np.ones_like(nodes[i])

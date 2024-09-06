@@ -74,22 +74,6 @@ def compute_invariants():
     I2 = sympy.Pow(J,-4/3)*(0.5*(sympy.Pow(sympy.Trace(F.T*F),2) - sympy.Trace(sympy.Pow(F.T*F,2))))
     return sympy.simplify(J), sympy.simplify(I1), sympy.simplify(I2), F11, F12, F21, F22
 
-# def compute_invariants():
-#     F11, F12, F21, F22 = se.symbols("F11 F12 F21 F22")
-#     C11 = F11**2 + F21**2
-#     C12 = F11*F12 + F21*F22
-#     C21 = F11*F12 + F21*F22
-#     C22 = F12**2 + F22**2
-
-#     # Compute computeStrainInvariants
-#     I1 = C11 + C22 + 1.0
-#     I2 = C11 + C22 - C12*C21 + C11*C22
-#     I3 = C11*C22 - C12*C21
-#     I1 = I1 * sympy.Pow(I3,-1/3) 
-#     I2 = (I1 + I3 - 1.) * sympy.Pow(I3,-2/3)
-#     J = sympy.Pow(I3,0.5)
-#     return sympy.simplify(J), sympy.simplify(I1), sympy.simplify(I2), F11, F12, F21, F22
-
 Ji, I1i, I2i, F11i, F12i, F21i, F22i = compute_invariants()
 
 def evaluate_se_mb_test(nodes, adj, F11_v, F12_v, F21_v, F22_v):
@@ -122,11 +106,7 @@ def evaluate_se_mb(nodes, adj, F11, F12, F21, F22, num_nodes_per_element, numNod
                  reactions, dim=2):
 
     W = se.sympify(to_algebraic_string(nodes,adj))
-    # W = se.sympify("0.5*(I1-3) + 1.5*(J-1)**2")
-    # print(W)
     J, I1, I2 = se.symbols("J I1 I2")
-    # dWdJ = se.diff(W,J) 
-    # Wc = dWdJ*(J-1)
     W = W.subs({J:Ji, I1:I1i, I2:I2i})
     F11_0 = 1.
     F12_0 = 0
@@ -139,11 +119,6 @@ def evaluate_se_mb(nodes, adj, F11, F12, F21, F22, num_nodes_per_element, numNod
     dW_NN_dF21 = se.diff(W,F21i)
     dW_NN_dF22 = se.diff(W,F22i)
 
-    # print(dW_NN_dF11)
-    # print(dW_NN_dF12)
-    # print(dW_NN_dF21)
-    # print(dW_NN_dF22)
-
     P11 = np.zeros((F11.shape[0],))
     P21 = np.zeros((F11.shape[0],))
     P12 = np.zeros((F11.shape[0],))
@@ -153,13 +128,6 @@ def evaluate_se_mb(nodes, adj, F11, F12, F21, F22, num_nodes_per_element, numNod
     P21_0 = np.zeros((F11.shape[0],))
     P12_0 = np.zeros((F11.shape[0],))
     P22_0 = np.zeros((F11.shape[0],))
-
-    # Sc  = np.array(Wc.subs({F11i:1, F12i:0, F21i:0, F22i:1}).evalf(16)).astype(np.float128)
-    # W0  =  np.array(W.subs({F11i:1, F12i:0, F21i:0, F22i:1}).evalf(16)).astype(np.float128)
-    # print(W0, "W0")
-    # print(Sc, "Sc")
-    # print( np.nan_to_num(W0, neginf=10), "W0 not -inf")
-    # print( np.nan_to_num(Sc, neginf=10), "Sc not -inf")
 
     for i in range(0, F11.shape[0]):
         P11[i] = np.array(dW_NN_dF11.subs({F11i:F11[i], F12i:F12[i], F21i:F21[i], F22i:F22[i]}).evalf(16)).astype(np.float128)
@@ -214,7 +182,6 @@ def evaluate_se_mb(nodes, adj, F11, F12, F21, F22, num_nodes_per_element, numNod
 def objective_function(nodes, adj, F11, F12, F21, F22, y,  num_nodes_per_element, numNodes,\
                  voigt_map, gradNa, qpWeights, connectivity, dirichlet_nodes, \
                  reactions):
-    # y_pred = evaluate_se_mb(nodes, adj, F11, F12, F21, F22)
     loss = evaluate_se_mb(nodes, adj, F11, F12, F21, F22, num_nodes_per_element, numNodes,\
                  voigt_map, gradNa, qpWeights, connectivity, dirichlet_nodes, \
                  reactions)
@@ -288,10 +255,6 @@ J   = d30['J'][:,0]
 I1  = d30['I1'][:,0]
 I2  = d30['I2'][:,0]
 
-# I1 = I1 * np.power(I3,-1/3) 
-# I2 = (I1 + I3 - 1.) * np.power(I3,-2/3)
-# J = np.power(I3,0.5)
-
 I1 = J**(-2/3)*I1
 I2 = J**(-4/3)*I2
 y = f(I1.astype(np.float128), I2.astype(np.float128), J.astype(np.float128))
@@ -320,7 +283,6 @@ model.load_state_dict(torch.load('results/saved_model_hyperelastic.torch'))
 def objective_fun(h):
     try:
         nodes, adj = decoding_functions(h)
-    # return objective_function(nodes, adj, I1, I2,J, y)
         return objective_function(nodes, adj, F11, F12, F21, F22, y, num_nodes_per_element, numNodes,\
                     voigt_map, gradNa, qpWeights, connectivity, dirichlet_nodes, \
                     reactions)
@@ -336,7 +298,6 @@ def create_tree_function(counter):
     es.optimize(objective_fun)
     h_opt = es.best.__dict__['x']
     nodes, adj = decoding_functions(h_opt)
-    # f_opt =objective_function(nodes, adj, I1, I2, J, y)
     f_opt =objective_function(nodes, adj, F11, F12, F21, F22, y,  num_nodes_per_element, numNodes,\
                  voigt_map, gradNa, qpWeights, connectivity, dirichlet_nodes, \
                  reactions)
@@ -354,5 +315,3 @@ number_of_trees = np.arange(100, 160)
 if __name__ == '__main__':
     with futures.ProcessPoolExecutor(max_workers=20) as executor:
         executor.map(create_tree_function, number_of_trees) 
-
-# create_tree_function(0)

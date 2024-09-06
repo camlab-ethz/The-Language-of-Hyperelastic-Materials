@@ -163,14 +163,6 @@ def _sample_power():
     s = f'{np.random.randint(2,3):.2f}'
     return tree.Tree(s)
 
-    # r = random.randrange(10)
-    # s1 = '0123456789'[r]
-    # r = random.randrange(10)
-    # s2 = '0123456789'[r]
-    # r = random.randrange(10)
-    # s3 = '0123456789'[r]
-    # return tree.Tree('0123456789'[r])
-
 def _sample_invariants():
     r = random.randrange(3)
     if r == 0:
@@ -375,66 +367,54 @@ def check_non_negativity(condition_count, expression, tensors, F, positivitySwit
     try:
         if sympy.simplify(expression.subs({F:F_UT2})) > sympy.simplify(expression.subs({F:F_UT1})):
             condition_count +=1 
-            # print("UT")
     except:
         return condition_count, positivitySwitch
 
     try:
         if sympy.simplify(expression.subs({F:F_UC2})) > sympy.simplify(expression.subs({F:F_UC1})):
             condition_count +=1 
-            # print("UC")
     except:
         return condition_count, positivitySwitch
 
     try:
         if sympy.simplify(expression.subs({F:F_SS2})) > sympy.simplify(expression.subs({F:F_SS1})):
             condition_count +=1 
-            # print("SS")
     except:
         return condition_count, positivitySwitch
 
     try:
         if sympy.simplify(expression.subs({F:F_BT2})) > sympy.simplify(expression.subs({F:F_BT1})):
             condition_count +=1 
-            # print("BT")
     except:
         return condition_count, positivitySwitch
 
     try:
         if sympy.simplify(expression.subs({F:F_BC2})) > sympy.simplify(expression.subs({F:F_BC1})):
             condition_count +=1 
-            # print("BC")
     except:
         return condition_count, positivitySwitch
 
     try:
         if sympy.simplify(expression.subs({F:F_PS2})) > sympy.simplify(expression.subs({F:F_PS1})):
             condition_count +=1 
-            # print("PS")
     except:
         return condition_count, positivitySwitch
 
-    # print(sympy.simplify(expression.subs({F:F_new12})), sympy.simplify(expression.subs({F:F_new11})), "New1")
-    # print(sympy.simplify(expression.subs({F:F_new22})), sympy.simplify(expression.subs({F:F_new21})), "New2")
-    # print(sympy.simplify(expression.subs({F:F_new32})), sympy.simplify(expression.subs({F:F_new31})), "New3")
     try:
         if sympy.simplify(expression.subs({F:F_new12})) < sympy.simplify(expression.subs({F:F_new11})):
             condition_count +=1 
-            # print("New1")
     except:
         return condition_count, positivitySwitch
 
     try:
         if sympy.simplify(expression.subs({F:F_new22})) < sympy.simplify(expression.subs({F:F_new21})):
             condition_count +=1 
-            # print("New2")
     except:
         return condition_count, positivitySwitch
 
     try:
         if sympy.simplify(expression.subs({F:F_new32})) < sympy.simplify(expression.subs({F:F_new31})):
             condition_count +=1 
-            # print("New3")
     except:
         return condition_count, positivitySwitch
        
