@@ -9,3 +9,14 @@ This is the code accompanying the manuscript "The Language of Hyperelastic Mater
 Training the model can be performed using the interactive notebook ```train_model.ipynb``` and the discovery process can be performed using the interactive python notebook  ```hyperelastic_discovery.ipynb```. The results can be plotted using the post_process notebooks ```post_process_results*.ipynb```. The ```post_process_*``` files containing ```Flaschel``` to their name correspond to the unsupervised and the other to the supervised discovery. In the folder ```Data``` the Finite Element Method simulation data accompanying the manuscript can be found. In the folder ```results``` one can find a trained ```pytorch``` model that can be used to re-produce the discovery results presented in the paper. Moreover, we include the notebook ```hyperelasticity_plate_grammarmodels.ipynb``` that contains a minimal Fenics implementation for solving the plate with a hole problem described in the paper with using different constitutive law models. The script ```parallel_discovery.py```
 can be used to perform the discovery process in paralled using multithreading. The code ```constitutive_relation_sampling.ipynb``` is an interactive notebook for sampling different constitutive laws from the grammar defined in ```constitutive_data.py```
 
+How to cite:
+
+    @article{kissas2024language,
+    title={The language of hyperelastic materials},
+    author={Kissas, Georgios and Mishra, Siddhartha and Chatzi, Eleni and De Lorenzis, Laura},
+    journal={Computer Methods in Applied Mechanics and Engineering},
+    volume={428},
+    pages={117053},
+    year={2024},
+    publisher={Elsevier}
+    }
